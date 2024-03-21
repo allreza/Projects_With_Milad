@@ -27,7 +27,6 @@ public class Main {
         Matcher matcher = pattern.matcher(getUrlInput());
 
         return false;
-        //"new text for new condition as I know"
     }
 
 
