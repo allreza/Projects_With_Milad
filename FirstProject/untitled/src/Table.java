@@ -9,4 +9,8 @@ public class Table {
     }
 
 
+    public boolean AddArgument(String argName, String argType) {
+
+        return false;
+    }
 }

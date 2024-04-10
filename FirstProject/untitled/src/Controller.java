@@ -13,8 +13,8 @@ public class Controller {
 
          _command = _command.toLowerCase();
 
-        Pattern pattern = Pattern.compile(".[a-z]+\\s+[a-z\\d]+\\s*(\\([a-z\\s\\d,]+\\))?" +
-                "\\s*(\\[[a-z\\s\\d,]+\\])?\\s*(\\{[a-z\\s\\d,]+\\})?");
+        Pattern pattern = Pattern.compile("[a-z]+\\s+[a-z\\d_]+\\s*(\\([a-z\\s\\d_,]+\\))?" +
+                "\\s*(\\[((\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*(,(\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*)*)\\])?\\s*(\\{[a-z\\s\\d_,]+\\})?");
         Matcher matcher = pattern.matcher(_command);
 
         if (!matcher.matches()) {
@@ -31,7 +31,7 @@ public class Controller {
         command = _command;
         return true;
     }
-    private static ArrayList<Table> tables;
+    public static ArrayList<Table> tables;
 
     public Controller() {
         command = "";
