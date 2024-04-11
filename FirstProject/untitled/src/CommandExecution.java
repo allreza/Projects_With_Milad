@@ -104,13 +104,13 @@ public class CommandExecution {
         for (Table table : Controller.tables) {
             if (table.getTableName().equals(innerTable.getTableName())) {
 
-                if(!table.AddRow(DistinctVariables()))
-                {
-                    System.out.println("Unable To add Row to '"+table.getTableName()+"!");
+                Dictionary<String, String> dstVar = DistinctVariables();
+                if (dstVar != null && !table.AddRow(dstVar)) {
+                    System.out.println("Unable To add Row to '" + table.getTableName() + "!");
                     return false;
                 }
 
-                //TODO : you need to print the entered row as output
+                //TODO : print the entered row as output
                 return true;
             }
         }
@@ -121,36 +121,35 @@ public class CommandExecution {
 
     private Dictionary<String, String> DistinctVariables() {
 
-            if (commandInputs.get("Variables") == null)
-            {
-                System.out.println("There are no variables to be set!");
-                return null;
-            }
+        if (commandInputs.get("Variables") == null) {
+            System.out.println("There are no variables to be set!");
+            return null;
+        }
 
-            String[] _tempVariables;
-            _tempVariables = commandInputs.get("Variables").trim().split("\\s*,\\s*");
+        String[] _tempVariables;
+        _tempVariables = commandInputs.get("Variables").trim().split("\\s*,\\s*");
 
-            Dictionary<String,String> variables = new Hashtable<>();
+        Dictionary<String, String> variables = new Hashtable<>();
 
-            for (String s : _tempVariables) {
+        for (String s : _tempVariables) {
             String[] _variableParts = s.split("\\s*=\\s*");
 
             variables.put(_variableParts[0], _variableParts[1]);
         }
 
-            return variables;
+        return variables;
     }
 
     private boolean DropTable() {
         for (Table table : Controller.tables) {
             if (table.getTableName().equals(innerTable.getTableName())) {
                 Controller.tables.remove(table);
-                System.out.println("Table '"+innerTable.getTableName()+"' was successfully removed!");
+                System.out.println("Table '" + innerTable.getTableName() + "' was successfully removed!");
                 return true;
             }
         }
 
-        System.out.println("Unable to drop table '"+innerTable.getTableName()+"'. no such table exists!");
+        System.out.println("Unable to drop table '" + innerTable.getTableName() + "'. no such table exists!");
         return false;
     }
 
@@ -158,7 +157,7 @@ public class CommandExecution {
 
         for (Table table : Controller.tables) {
             if (table.getTableName().equals(innerTable.getTableName())) {
-                System.out.println("table name '"+innerTable.getTableName()+"' Exists. Please change the name!");
+                System.out.println("table name '" + innerTable.getTableName() + "' Exists. Please change the name!");
                 return false;
             }
         }
@@ -176,8 +175,7 @@ public class CommandExecution {
 
         String[] _tempArrayArgs;
 
-        if (commandInputs.get("Arguments") == null)
-        {
+        if (commandInputs.get("Arguments") == null) {
             System.out.println("There are no arguments to be set!");
             return false;
         }
@@ -187,9 +185,8 @@ public class CommandExecution {
         for (String s : _tempArrayArgs) {
 
             String[] argumentParts = s.split("\\s+");
-            if (!innerTable.AddArgument(argumentParts[0], argumentParts[1]))
-            {
-                System.out.println("Unable to add argument '"+argumentParts[0]+"' to the table!");
+            if (!innerTable.AddArgument(argumentParts[0], argumentParts[1])) {
+                System.out.println("Unable to add argument '" + argumentParts[0] + "' to the table!");
                 return false;
             }
         }
