@@ -51,32 +51,32 @@ public class CommandExecution {
 
         if (commandInputs.get("ExecAction").equals(commandsList[0])) {
             if (!CreateTable()) {
-                System.out.println("Unable to create table '" + innerTable.getTableName() + "'!\n");
+                System.out.println("Unable to create table '" + innerTable.getTableName() + "'!");
                 return false;
             }
         } else if (commandInputs.get("ExecAction").equals(commandsList[1])) {
             if (!DropTable()) {
-                System.out.println("Unable to drop table!\n");
+                System.out.println("Unable to drop table!");
                 return false;
             }
         } else if (commandInputs.get("ExecAction").equals(commandsList[2])) {
             if (!AddRows()) {
-                System.out.println("Unable to add rows!\n");
+                System.out.println("Unable to add rows!");
                 return false;
             }
         } else if (commandInputs.get("ExecAction").equals(commandsList[3])) {
             if (!GetRows()) {
-                System.out.println("Unable to get rows!\n");
+                System.out.println("Unable to get rows!");
                 return false;
             }
         } else if (commandInputs.get("ExecAction").equals(commandsList[4])) {
             if (!SetRows()) {
-                System.out.println("Unable to set rows!\n");
+                System.out.println("Unable to set rows!");
                 return false;
             }
         } else if (commandInputs.get("ExecAction").equals(commandsList[5])) {
             if (!DelRows()) {
-                System.out.println("Unable to delete rows!\n");
+                System.out.println("Unable to delete rows!");
                 return false;
             }
         } else {
@@ -84,7 +84,7 @@ public class CommandExecution {
             return false;
         }
 
-        System.out.println("execution was successful");
+        System.out.println("execution was successful!");
         return true;
     }
 
@@ -101,18 +101,71 @@ public class CommandExecution {
     }
 
     private boolean AddRows() {
-        return true;
+        for (Table table : Controller.tables) {
+            if (table.getTableName().equals(innerTable.getTableName())) {
+
+                if(!table.AddRow(DistinctVariables()))
+                {
+                    System.out.println("Unable To add Row to '"+table.getTableName()+"!");
+                    return false;
+                }
+
+                //TODO : you need to print the entered row as output
+                return true;
+            }
+        }
+
+        System.out.println("Unable to find table '" + innerTable.getTableName() + "'!");
+        return false;
+    }
+
+    private Dictionary<String, String> DistinctVariables() {
+
+            if (commandInputs.get("Variables") == null)
+            {
+                System.out.println("There are no variables to be set!");
+                return null;
+            }
+
+            String[] _tempVariables;
+            _tempVariables = commandInputs.get("Variables").trim().split("\\s*,\\s*");
+
+            Dictionary<String,String> variables = new Hashtable<>();
+
+            for (String s : _tempVariables) {
+            String[] _variableParts = s.split("\\s*=\\s*");
+
+            variables.put(_variableParts[0], _variableParts[1]);
+        }
+
+            return variables;
     }
 
     private boolean DropTable() {
-        return true;
+        for (Table table : Controller.tables) {
+            if (table.getTableName().equals(innerTable.getTableName())) {
+                Controller.tables.remove(table);
+                System.out.println("Table '"+innerTable.getTableName()+"' was successfully removed!");
+                return true;
+            }
+        }
+
+        System.out.println("Unable to drop table '"+innerTable.getTableName()+"'. no such table exists!");
+        return false;
     }
 
     private boolean CreateTable() {
-        if (SetArguments()) {
 
+        for (Table table : Controller.tables) {
+            if (table.getTableName().equals(innerTable.getTableName())) {
+                System.out.println("table name '"+innerTable.getTableName()+"' Exists. Please change the name!");
+                return false;
+            }
+        }
+
+        if (SetArguments()) {
             Controller.tables.add(innerTable);
-            System.out.println("Creating table '" + innerTable.getTableName() + "' was successful!\n");
+            System.out.println("Creating table '" + innerTable.getTableName() + "' was successful!");
             return true;
         }
 
@@ -122,20 +175,24 @@ public class CommandExecution {
     private boolean SetArguments() {
 
         String[] _tempArrayArgs;
+
+        if (commandInputs.get("Arguments") == null)
+        {
+            System.out.println("There are no arguments to be set!");
+            return false;
+        }
+
         _tempArrayArgs = commandInputs.get("Arguments").trim().split("\\s*,\\s*");
+
         for (String s : _tempArrayArgs) {
 
             String[] argumentParts = s.split("\\s+");
             if (!innerTable.AddArgument(argumentParts[0], argumentParts[1]))
             {
-                System.out.println("Unable to add argument '"+argumentParts[0]+"' to the table!\n");
+                System.out.println("Unable to add argument '"+argumentParts[0]+"' to the table!");
                 return false;
             }
         }
-
-            //ArrayList<ArrayList<String>> str = new ArrayList<>();
-            //ArrayList<String> newLine = new ArrayList<>();
-            //str.add(newLine);
 
         return true;
     }

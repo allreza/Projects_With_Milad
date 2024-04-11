@@ -13,18 +13,20 @@ public class Controller {
 
          _command = _command.toLowerCase();
 
-        Pattern pattern = Pattern.compile("[a-z]+\\s+[a-z\\d_]+\\s*(\\([a-z\\s\\d_,]+\\))?" +
-                "\\s*(\\[((\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*(,(\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*)*)\\])?\\s*(\\{[a-z\\s\\d_,]+\\})?");
+        Pattern pattern = Pattern.compile("[a-z]+\\s+[a-z\\d_]+" +
+                "\\s*(\\([a-z\\s\\d_,]+\\))?" +  //Parameters
+                "\\s*(\\[((\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*(,(\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*)*)\\])?" + //Arguments
+                "\\s*(\\{([a-z\\d_]+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+'))\\s*(,(\\s*[a-z\\d_]+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+')))*\\s*\\})?");  //Variables
         Matcher matcher = pattern.matcher(_command);
 
         if (!matcher.matches()) {
 
             if (_command.isBlank()) {
-                System.out.println("You haven't entered any command yet!\n");
+                System.out.println("You haven't entered any command yet!");
                 return false;
             }
 
-            System.out.println("Command format is not correct!\n");
+            System.out.println("Command format is not correct!");
             return false;
         }
 
@@ -40,12 +42,16 @@ public class Controller {
 
     public static void main(String[] args) {
         Scanner _input = new Scanner(System.in);
+        tables = new ArrayList<>();
 
         String _inputLine = _input.nextLine();
 
         while (!_inputLine.equalsIgnoreCase("quit")) {
             if (setCommand(_inputLine))
-                new CommandExecution(getCommand()).Execute();
+            {
+                if(!new CommandExecution(getCommand()).Execute())
+                    System.out.println("Unable to execute the command!");
+            }
             _inputLine = _input.nextLine();
         }
 
