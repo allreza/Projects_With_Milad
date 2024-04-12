@@ -78,19 +78,40 @@ public class Table {
         }
 
         Rows.add(_tempRow);
+        PrintRow(_tempRow);
+        return true;
+    }
 
-
+    private void PrintRow(Object[] printRow) {
         for (String key : Arguments.keySet()) {
-            System.out.printf("%-10s", key);
+            System.out.printf("%-20s", key);
         }
         System.out.println();
 
-        for (Object obj : _tempRow) {
-            if (obj == "")
-                System.out.printf("%-10s","''");
+        for (Object obj : printRow) {
+            if (obj.getClass().equals(String.class))
+                System.out.printf("%-20s", "'"+obj+"'");
             else
-                System.out.printf("%-10s", obj.toString());
+                System.out.printf("%-20s",obj.toString());
         }
-        return true;
+
+        System.out.println();
     }
+
+    private void PrintRows(ArrayList<Object[]> printRow) {
+        for (String key : Arguments.keySet()) {
+            System.out.printf("%-20s", key);
+        }
+        System.out.println();
+        for (Object[] objects : printRow) {
+            for (Object obj : objects) {
+                if (obj.getClass().equals(String.class))
+                    System.out.printf("%-20s", "'"+obj+"'");
+                else
+                    System.out.printf("%-20s",obj.toString());
+            }
+            System.out.println();
+        }
+    }
+
 }
