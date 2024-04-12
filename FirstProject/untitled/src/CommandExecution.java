@@ -1,3 +1,5 @@
+import com.sun.jdi.connect.Connector;
+
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -97,7 +99,17 @@ public class CommandExecution {
     }
 
     private boolean GetRows() {
+        for (Table table : Controller.tables) {
+            if (table.getTableName().equals(innerTable.getTableName())) {
+
+            }
+            }
         return true;
+    }
+
+    private String[] DistinctParameters()
+    {
+        return new String[]{"dd"};
     }
 
     private boolean AddRows() {
@@ -110,7 +122,6 @@ public class CommandExecution {
                     return false;
                 }
 
-                //TODO : print the entered row as output
                 return true;
             }
         }

@@ -78,6 +78,19 @@ public class Table {
         }
 
         Rows.add(_tempRow);
+
+
+        for (String key : Arguments.keySet()) {
+            System.out.printf("%-10s", key);
+        }
+        System.out.println();
+
+        for (Object obj : _tempRow) {
+            if (obj == "")
+                System.out.printf("%-10s","''");
+            else
+                System.out.printf("%-10s", obj.toString());
+        }
         return true;
     }
 }
