@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 
 public class Table {
 
@@ -16,7 +13,7 @@ public class Table {
     }
 
     private ArrayList<Object[]> Rows = new ArrayList<>();
-    private Dictionary<String,String> Arguments = new Hashtable<>(50);
+    private LinkedHashMap<String,String> Arguments = new LinkedHashMap<>();
 
     ///Allowed types are int, dbl, str
     public boolean AddArgument(String argName, String argType) {
@@ -42,9 +39,9 @@ public class Table {
         }
 
         //Add variables into the new table row
-        Enumeration<String> tableKeys = Arguments.keys();
+        String[] tableKeys = Arguments.sequencedKeySet().toArray(new String[0]);
         for (int i = 0; i < Arguments.size(); i++) {
-            String _tempKey = tableKeys.nextElement();
+            String _tempKey = tableKeys[i];
             String _tempVariable = _row.get(_tempKey);
 
             if (_tempVariable == null) {
@@ -74,7 +71,7 @@ public class Table {
                         }
                         break;
                     case "str":
-                            _tempRow[i] = _tempVariable;
+                            _tempRow[i] = _tempVariable.replace("'","");
                         break;
                 }
             }

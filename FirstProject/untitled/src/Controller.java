@@ -13,10 +13,10 @@ public class Controller {
 
          _command = _command.toLowerCase();
 
-        Pattern pattern = Pattern.compile("[a-z]+\\s+[a-z\\d_]+" +
-                "\\s*(\\([a-z\\s\\d_,]+\\))?" +  //Parameters
-                "\\s*(\\[((\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*(,(\\s*[a-z\\d_]+\\s+(str|int|dbl))\\s*)*)\\])?" + //Arguments
-                "\\s*(\\{([a-z\\d_]+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+'))\\s*(,(\\s*[a-z\\d_]+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+')))*\\s*\\})?");  //Variables
+        Pattern pattern = Pattern.compile("[a-z]+\\s+\\w+" +
+                "\\s*(\\(\\s*([\\w\\s+-]+[<=>].+)\\s*(,\\s*[\\w\\s+-]+[<=>].+)*\\s*\\))?" +  //Parameters
+                "\\s*(\\[((\\s*\\w+\\s+(str|int|dbl))\\s*(,(\\s*\\w+\\s+(str|int|dbl))\\s*)*)\\])?" + //Arguments
+                "\\s*(\\{(\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+'))\\s*(\\s*,(\\s*\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+')))*\\s*\\})?");  //Variables
         Matcher matcher = pattern.matcher(_command);
 
         if (!matcher.matches()) {
