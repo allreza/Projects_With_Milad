@@ -4,6 +4,22 @@ public class Table {
 
     private String tableName;
 
+    public Table() {
+    }
+
+    //Class copier Koli
+    public Table(Table table) {
+        this.tableName = table.getTableName();
+        this.Rows.addAll(table.Rows);
+        this.Arguments.putAll(table.Arguments);
+    }
+    //Class copier for Filter usage
+    public Table(Table table , ArrayList<Object[]> newRows) {
+        this.tableName = table.getTableName();
+        this.Rows.addAll(newRows);
+        this.Arguments.putAll(table.Arguments);
+    }
+
     public String getTableName() {
         return tableName;
     }
@@ -13,11 +29,11 @@ public class Table {
     }
 
     private ArrayList<Object[]> Rows = new ArrayList<>();
-    private LinkedHashMap<String,String> Arguments = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> Arguments = new LinkedHashMap<>();
 
     ///Allowed types are int, dbl, str
     public boolean AddArgument(String argName, String argType) {
-        Arguments.put(argName,argType);
+        Arguments.put(argName, argType);
 
         System.out.println("Argument '" + argName + "' was successfully added!");
         return true;
@@ -33,7 +49,7 @@ public class Table {
 
             String _tempVariable = Arguments.get(_tempKey);
             if (_tempVariable == null) {
-                System.out.println("Variable '"+_tempKey+"' doesn't exist as a table variable!");
+                System.out.println("Variable '" + _tempKey + "' doesn't exist as a table variable!");
                 return false;
             }
         }
@@ -50,15 +66,14 @@ public class Table {
                     case "dbl" -> _tempRow[i] = 0.0;
                     case "str" -> _tempRow[i] = "";
                 }
-            }
-            else {
+            } else {
 
                 switch (Arguments.get(_tempKey)) {
                     case "int":
                         try {
                             _tempRow[i] = Integer.parseInt(_tempVariable);
                         } catch (NumberFormatException e) {
-                            System.out.println("the Value for argument'"+_tempKey+"' is '"+_tempVariable+"' which is not an integer!");
+                            System.out.println("the Value for argument'" + _tempKey + "' is '" + _tempVariable + "' which is not an integer!");
                             return false;
                         }
                         break;
@@ -66,12 +81,12 @@ public class Table {
                         try {
                             _tempRow[i] = Double.parseDouble(_tempVariable);
                         } catch (NumberFormatException e) {
-                            System.out.println("the Value for argument'"+_tempKey+"' is '"+_tempVariable+"' which is not a double!");
+                            System.out.println("the Value for argument'" + _tempKey + "' is '" + _tempVariable + "' which is not a double!");
                             return false;
                         }
                         break;
                     case "str":
-                            _tempRow[i] = _tempVariable.replace("'","");
+                        _tempRow[i] = _tempVariable.replace("'", "");
                         break;
                 }
             }
@@ -90,15 +105,15 @@ public class Table {
 
         for (Object obj : printRow) {
             if (obj.getClass().equals(String.class))
-                System.out.printf("%-20s", "'"+obj+"'");
+                System.out.printf("%-20s", "'" + obj + "'");
             else
-                System.out.printf("%-20s",obj.toString());
+                System.out.printf("%-20s", obj.toString());
         }
 
         System.out.println();
     }
 
-    private void PrintRows(ArrayList<Object[]> printRow) {
+    public void PrintRows(ArrayList<Object[]> printRow) {
         for (String key : Arguments.keySet()) {
             System.out.printf("%-20s", key);
         }
@@ -106,12 +121,59 @@ public class Table {
         for (Object[] objects : printRow) {
             for (Object obj : objects) {
                 if (obj.getClass().equals(String.class))
-                    System.out.printf("%-20s", "'"+obj+"'");
+                    System.out.printf("%-20s", "'" + obj + "'");
                 else
-                    System.out.printf("%-20s",obj.toString());
+                    System.out.printf("%-20s", obj.toString());
             }
             System.out.println();
         }
     }
 
+    public void PrintWholeTable() {
+        PrintRows(Rows);
+    }
+
+    //Returns rows as filter requested
+    public ArrayList<Object[]> GetFilteredRows(String[] _filter) {
+        ArrayList<Object[]> tempRows = new ArrayList<>();
+
+            String[][] argsP1_2 = new String[2][];
+
+            for (int i = 0; i < 2; i++) {
+                argsP1_2[i] = _filter[i].trim().split("\\s*[\\+-]\\s*");
+            }
+
+
+
+            for (Object[] row : Rows) {
+                int[] intP12 = new int[2];
+
+                int counter = 0;
+                for (String argument : Arguments.sequencedKeySet()) {
+                    for (int i = 0; i < 2; i++) {
+                        for (String arg : argsP1_2[i]) {
+                            if (argument.equals(arg))
+                                intP12 [i] += (int) row[counter];
+                        }
+                    }
+                    counter++;
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    for (String arg : argsP1_2[i]) {
+                        if (arg.matches("\\d+"))
+                            intP12[i] = Integer.parseInt(arg);
+                    }
+                }
+
+                if (_filter[2].equals(">") && intP12[0] > intP12[1])
+                    tempRows.add(row);
+                else if (_filter[2].equals("<") && intP12[0] < intP12[1])
+                    tempRows.add(row);
+                else if (_filter[2].equals("=") && intP12[0] == intP12[1])
+                    tempRows.add(row);
+            }
+
+        return tempRows;
+    }
 }

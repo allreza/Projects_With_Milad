@@ -1,5 +1,4 @@
-import com.sun.jdi.connect.Connector;
-
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -102,14 +101,76 @@ public class CommandExecution {
         for (Table table : Controller.tables) {
             if (table.getTableName().equals(innerTable.getTableName())) {
 
+                if (commandInputs.get("Parameters") == null)
+                {
+                    table.PrintWholeTable();
+                    return true;
+                }
+
+                ArrayList<String[]> tempFilters = DistinctParameters();
+
+                if (tempFilters == null) {
+                    System.out.println("There are no correct filters!");
+                    return false;
+                }
+
+                Table _tempTable = new Table(table);
+
+                for (String[] tempFilter : tempFilters) {
+
+                    ArrayList<Object[]> returnedRows = _tempTable.GetFilteredRows(tempFilter);
+
+                    if (returnedRows.size() < 1) {
+                        System.out.println("No such item was found on '"+_tempTable.getTableName()+"'!");
+                        return false;
+                    }
+
+                    _tempTable = new Table(_tempTable,returnedRows);
+                }
+
+                //Printing whole filtered table
+                _tempTable.PrintWholeTable();
+
+                return true;
             }
             }
-        return true;
+
+        System.out.println("Unable to find table '" + innerTable.getTableName() + "'!");
+        return false;
     }
 
-    private String[] DistinctParameters()
-    {
-        return new String[]{"dd"};
+
+    //Returns all parameters in array list of three parted string[] as followed : two operands and one operator
+    private ArrayList<String[]> DistinctParameters() {
+        String[] _parameterBlocks;
+        _parameterBlocks = commandInputs.get("Parameters").trim().split("\\s*,\\s*");
+
+        ArrayList<String[]> returnData = new ArrayList<>();
+
+        String[] paramParts;
+        for (String s : _parameterBlocks) {
+            String[] tmp = s.split("\\s*[<=>]\\s*");
+
+            if (tmp.length > 2)
+            {
+                System.out.println("Parameter '"+s+"' is not in the correct format!");
+                return null;
+            }
+
+            paramParts = new String[3];
+
+            paramParts[0] = tmp[0];
+            paramParts[1] = tmp[1];
+
+            String[] chars = {">", "<", "="};
+            for (String c : chars) {
+                if (s.contains(c)) {
+                    paramParts[2] = c;
+                }
+            }
+            returnData.add(paramParts);
+        }
+        return returnData;
     }
 
     private boolean AddRows() {
@@ -137,8 +198,8 @@ public class CommandExecution {
             return null;
         }
 
-        String[] _tempVariables;
-        _tempVariables = commandInputs.get("Variables").trim().split("\\s*,\\s*");
+        //String[] _tempVariables;
+        String[] _tempVariables = commandInputs.get("Variables").trim().split("\\s*,\\s*");
 
         Dictionary<String, String> variables = new Hashtable<>();
 
