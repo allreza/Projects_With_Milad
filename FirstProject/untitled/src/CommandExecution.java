@@ -90,11 +90,50 @@ public class CommandExecution {
     }
 
     private boolean DelRows() {
-        return true;
+        for (Table table : Controller.tables) {
+            if (table.getTableName().equals(innerTable.getTableName())) {
+
+                if (commandInputs.get("Parameters") == null)
+                {
+                    table.DeleteAllRows();
+                    return true;
+                }
+
+                ArrayList<String[]> tempFilters = DistinctParameters();
+
+                if (tempFilters == null) {
+                    System.out.println("There are no correct filters!");
+                    return false;
+                }
+
+                Table _tempTable = new Table(table);
+                ArrayList<Object[]> returnedRows = new ArrayList<>();
+
+                for (String[] tempFilter : tempFilters) {
+
+                    returnedRows = _tempTable.GetFilteredRows(tempFilter);
+
+                    if (returnedRows.size() < 1) {
+                        System.out.println("No such item was found on '"+_tempTable.getTableName()+"'!");
+                        return false;
+                    }
+
+                    _tempTable = new Table(_tempTable,returnedRows);
+                }
+
+                //Deleting whole filtered table from real one
+                table.DeleteRows(returnedRows);
+
+                return true;
+            }
+        }
+
+        System.out.println("Unable to find table '" + innerTable.getTableName() + "'!");
+        return false;
     }
 
     private boolean SetRows() {
-        return true;
+       return true;
     }
 
     private boolean GetRows() {

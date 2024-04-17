@@ -14,9 +14,9 @@ public class Controller {
          _command = _command.toLowerCase();
 
         Pattern pattern = Pattern.compile("[a-z]+\\s+\\w+" +
-                "\\s*(\\(\\s*([\\w\\s+-]+[<=>].+)\\s*(,\\s*[\\w\\s+-]+[<=>].+)*\\s*\\))?" +  //Parameters
+                "\\s*(\\(\\s*([\\w\\s+.-]+[<=>].+)\\s*(,\\s*[\\w\\s+.-]+[<=>].+)*\\s*\\))?" +  //Parameters
                 "\\s*(\\[((\\s*\\w+\\s+(str|int|dbl))\\s*(,(\\s*\\w+\\s+(str|int|dbl))\\s*)*)\\])?" + //Arguments
-                "\\s*(\\{(\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+'))\\s*(\\s*,(\\s*\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+')))*\\s*\\})?");  //Variables
+                "\\s*(\\{\\s*(\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+'))\\s*(\\s*,(\\s*\\w+\\s*=\\s*((\\d+(\\.\\d+)?)|'.+')))*\\s*\\})?");  //Variables
         Matcher matcher = pattern.matcher(_command);
 
         if (!matcher.matches()) {

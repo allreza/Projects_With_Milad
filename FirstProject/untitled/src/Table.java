@@ -141,19 +141,123 @@ public class Table {
 
             for (int i = 0; i < 2; i++) {
                 argsP1_2[i] = _filter[i].trim().split("\\s*[\\+-]\\s*");
+
             }
 
 
+            //double filter
+            if (argsP1_2[0][0].matches("\\d+.\\d+") || "dbl".equals(Arguments.get(argsP1_2[0][0]))) {
+                for (String[] strings : argsP1_2) {
+                    for (String argument : strings) {
+                        if (!(argument.matches("\\d+.\\d+") || "dbl".equals(Arguments.get(argument)))) {
+                            System.out.println("Not all arguments are from double type!");
+                            return new ArrayList<>();
+                        }
+                    }
+                }
+
+                for (Object[] row : Rows) {
+                    double[] dblP12 = new double[2];
+
+                    int counter = 0;
+                    for (String argument : Arguments.sequencedKeySet()) {
+                        for (int i = 0; i < 2; i++) {
+                            for (String arg : argsP1_2[i]) {
+                                if (argument.equals(arg))
+                                    dblP12 [i] += (double) row[counter];
+                            }
+                        }
+                        counter++;
+                    }
+
+                    for (int i = 0; i < 2; i++) {
+                        for (String arg : argsP1_2[i]) {
+                            if (arg.matches("\\d+.\\d*"))
+                                dblP12[i] = Double.parseDouble(arg);
+                        }
+                    }
+
+                    if (_filter[2].equals(">") && dblP12[0] > dblP12[1])
+                        tempRows.add(row);
+                    else if (_filter[2].equals("<") && dblP12[0] < dblP12[1])
+                        tempRows.add(row);
+                    else if (_filter[2].equals("=") && dblP12[0] == dblP12[1])
+                        tempRows.add(row);
+                }
+            }
+
+            //integer filter
+            else if (argsP1_2[0][0].matches("\\d+") || "int".equals(Arguments.get(argsP1_2[0][0]))) {
+                for (String[] strings : argsP1_2) {
+                    for (String argument : strings) {
+                        if (!(argument.matches("\\d+") || "int".equals(Arguments.get(argument)))) {
+                            System.out.println("Not all arguments are from int type!");
+                            return new ArrayList<>();
+                        }
+                    }
+                }
+
+                for (Object[] row : Rows) {
+                    int[] intP12 = new int[2];
+
+                    int counter = 0;
+                    for (String argument : Arguments.sequencedKeySet()) {
+                        for (int i = 0; i < 2; i++) {
+                            for (String arg : argsP1_2[i]) {
+                                if (argument.equals(arg))
+                                    intP12[i] += (int) row[counter];
+                            }
+                        }
+                        counter++;
+                    }
+
+                    for (int i = 0; i < 2; i++) {
+                        for (String arg : argsP1_2[i]) {
+                            if (arg.matches("\\d+"))
+                                intP12[i] = Integer.parseInt(arg);
+                        }
+                    }
+
+                    if (_filter[2].equals(">") && intP12[0] > intP12[1])
+                        tempRows.add(row);
+                    else if (_filter[2].equals("<") && intP12[0] < intP12[1])
+                        tempRows.add(row);
+                    else if (_filter[2].equals("=") && intP12[0] == intP12[1])
+                        tempRows.add(row);
+                }
+            }
+
+            //string filter
+            else if (argsP1_2[0][0].matches("'.+'") || "str".equals(Arguments.get(argsP1_2[0][0]))) {
+            for (String[] strings : argsP1_2) {
+                for (String argument : strings) {
+                    if (!(argument.matches("'.+'") || "str".equals(Arguments.get(argument)))) {
+                        System.out.println("Not all arguments are from string type!");
+                        return new ArrayList<>();
+                    }
+                }
+            }
+
+            //need to be optimized for string types because one argument should be accepted simultaneously
+                // بین جمع و تفریق قائل بشه تو هر کدوم جدا
+                // الان فقط همه رو جمع میزنه
+//                String[] chars = {">", "<", "="};
+//                for (String c : chars) {
+//                    if (s.contains(c)) {
+//                        paramParts[2] = c;
+//                    }
+//                {
+//                get students (id - 402120 > age + weight)
 
             for (Object[] row : Rows) {
-                int[] intP12 = new int[2];
+                String[] stringP12 = new String[2];
 
                 int counter = 0;
                 for (String argument : Arguments.sequencedKeySet()) {
                     for (int i = 0; i < 2; i++) {
                         for (String arg : argsP1_2[i]) {
                             if (argument.equals(arg))
-                                intP12 [i] += (int) row[counter];
+                                stringP12 [i] = "'" + row[counter] + "'";
                         }
                     }
                     counter++;
@@ -161,19 +265,41 @@ public class Table {
 
                 for (int i = 0; i < 2; i++) {
                     for (String arg : argsP1_2[i]) {
-                        if (arg.matches("\\d+"))
-                            intP12[i] = Integer.parseInt(arg);
+                        if (arg.matches("'.+'"))
+                            stringP12[i] = arg;
                     }
                 }
 
-                if (_filter[2].equals(">") && intP12[0] > intP12[1])
+                if (_filter[2].equals(">") && stringP12[0].compareTo(stringP12[1]) > 0)
                     tempRows.add(row);
-                else if (_filter[2].equals("<") && intP12[0] < intP12[1])
+                else if (_filter[2].equals("<") && stringP12[0].compareTo(stringP12[1]) < 0)
                     tempRows.add(row);
-                else if (_filter[2].equals("=") && intP12[0] == intP12[1])
+                else if (_filter[2].equals("=") && stringP12[0].equals(stringP12[1]))
                     tempRows.add(row);
             }
+        }
 
         return tempRows;
+    }
+
+    public void DeleteAllRows() {
+
+        int length = Rows.size();
+        for (int i = 0; i < length; i++) {
+            Rows.remove(0);
+        }
+
+        System.out.println(length + " rows were deleted from table '"+ this.getTableName() +"'");
+    }
+
+    public void DeleteRows(ArrayList<Object[]> returnedRows) {
+        int deleteCount = 0;
+
+        for (Object[] row : returnedRows) {
+            Rows.remove(row);
+            deleteCount++;
+        }
+
+        System.out.println(deleteCount + " rows were deleted from table '"+ this.getTableName() +"'");
     }
 }
